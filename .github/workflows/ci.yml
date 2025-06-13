@@ -1,0 +1,56 @@
+name: Api CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout API repository
+        uses: actions/checkout@v4
+        with:
+          path: api-repo
+
+      - name: Set up Node.js for API
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install API dependencies
+        run: npm install
+        working-directory: api-repo
+
+      - name: Start API application
+        run: npm run dev
+        working-directory: api-repo
+        env:
+          MONGO_URL: ${{ secrets.MONGO_TEST_URL }}
+          ADMIN: ${{ secrets.ADMIN_USERNAME }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          NODE_ENV: test
+
+      - name: Checkout test repository
+        uses: actions/checkout@v4
+        with:
+          repository: azuhav/blog-e2e
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: test-repo
+
+      - name: Set up Node.js for tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install test dependencies
+        run: npm install
+        working-directory: test-repo
+
+      - name: Run tests
+        run: npx cypress run --config-file cypress.config.js
+        working-directory: test-repo
+        env:
+          CYPRESS_BASE_URL: http://localhost:3000
