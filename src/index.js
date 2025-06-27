@@ -233,3 +233,5 @@ app.put('/api/posts/:id', authenticateToken, async (req, res) => {
     }
 });
 
+export default app;
+
