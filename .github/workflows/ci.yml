@@ -32,7 +32,7 @@ jobs:
         run: npm run lint || true
 
       - name: Run tests
-        run: npm test || true
+        run: npx cypress run --config-file test-repo/cypress.config.js
         env:
           MONGO_URL: ${{ secrets.MONGO_TEST_URL }}
           ADMIN: ${{ secrets.ADMIN_USERNAME }}
