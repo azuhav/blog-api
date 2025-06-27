@@ -20,15 +20,15 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./blog-api/api
+        working-directory: ./
 
       - name: Lint
         run: npm run lint || true
-        working-directory: ./api
+        working-directory: ./
 
       - name: Run tests
         run: npm test || true
-        working-directory: ./api
+        working-directory: ./
         env:
           MONGO_URL: ${{ secrets.MONGO_TEST_URL }}
           ADMIN: ${{ secrets.ADMIN_USERNAME }}
