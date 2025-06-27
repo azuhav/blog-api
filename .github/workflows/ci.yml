@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./api
+        working-directory: ./blog-api/api
 
       - name: Lint
         run: npm run lint || true
