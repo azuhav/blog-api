@@ -61,8 +61,10 @@ app.post("/api/upload", authenticateToken, upload.single("image"), (req, res) =>
 
         res.status(201).json({ message: "Upload successful", imageUrl });
     } catch (error) {
-        console.error("Upload failed:", error);
-        res.status(500).json({ message: "Upload failed", error });
+        res.status(500).json({
+            message: "Upload failed",
+            error: error.message || "An unknown error occurred" // <--- Focus here
+        });
     }
 });
 
@@ -118,7 +120,10 @@ app.post('/api/register', registrationValidator, async (req, res) => {
 
         res.status(201).json({ message: 'User registered successfully', user });
     } catch (error) {
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({
+            message: "Internal Server Error",
+            error: error.message || "An unknown error occurred"
+        });
     }
 });
 
@@ -166,9 +171,13 @@ app.get('/api/auth-status', (req, res) => {
 
     try {
         jwt.verify(token, secret);
-        res.json({ isAuthenticated: true });
+        res.status(200).json({ isAuthenticated: true });
     } catch (error) {
-        res.json({ isAuthenticated: false });
+        res.status(401).json({
+            isAuthenticated: false,
+            error: error.message || "An unknown error occurred",
+
+        });
     }
 });
 
@@ -177,7 +186,10 @@ app.get("/api/posts", async (req, res) => {
         const posts = await Post.find().sort({ createdAt: -1 }).limit(5); // Sort by newest first
         res.status(200).json(posts);
     } catch (error) {
-        res.status(500).json({ error: "Failed to fetch posts" });
+        res.status(500).json({
+            message: "Falied to fetch posts",
+            error: error.message || "An unknown error occurred"
+        });
     }
 });
 
@@ -187,9 +199,12 @@ app.get("/api/posts/:id", async (req, res) => {
         if (!post) {
             return res.status(404).json({ error: "Post not found" });
         }
-        res.json(post);
+        res.status(200).json(post);
     } catch (error) {
-        res.status(500).json({ error: "Failed to fetch post" });
+        res.status(500).json({
+            message: "Falied to fetch a post",
+            error: error.message || "An unknown error occurred"
+        });
     }
 });
 
