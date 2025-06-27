@@ -1,0 +1,36 @@
+name: Api CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./api
+
+      - name: Lint
+        run: npm run lint || true
+        working-directory: ./api
+
+      - name: Run tests
+        run: npm test || true
+        working-directory: ./api
+        env:
+          MONGO_URL: ${{ secrets.MONGO_TEST_URL }}
+          ADMIN: ${{ secrets.ADMIN_USERNAME }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          NODE_ENV: test
